@@ -17,6 +17,10 @@ class Modal {
     this.todos = [...initialTodos];
   }
 
+  bindModalToController(handler) {
+    this.todoListChanged = handler;
+  }
+
   addTodo(name: string) {
     const length = this.todos.length;
     this.todos.push({
@@ -24,6 +28,7 @@ class Modal {
       todo: name,
       completed: false,
     });
+    this.todoListChanged();
   }
 
   removeTodo(id: number) {

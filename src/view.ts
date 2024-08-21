@@ -20,6 +20,8 @@ class View {
     this.app.appendChild(this.h1);
     this.app.appendChild(this.form);
     this.app.appendChild(this.ul);
+
+    // this.bindAddToDoHandler();
   }
 
   qs(selector: string) {
@@ -34,6 +36,17 @@ class View {
       element.className += className;
     }
     return element;
+  }
+
+  bindAddToDoHandler(handler: () => {}) {
+    this.form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      //   you can add validation here
+      const inputValue = this.input.value;
+      if (inputValue.trim() === "") return;
+      console.log("value", inputValue);
+      handler(inputValue);
+    });
   }
 
   renderUI(todos: Todo[]) {
