@@ -1,24 +1,28 @@
 // @ts-nocheck
 
 const initialTodos = [
-  {
-    id: 1,
-    todo: "Read JS Book",
-    completed: false,
-  },
-  {
-    id: 2,
-    todo: "Read Design Patterns Book",
-    completed: false,
-  },
+  // {
+  //   id: 1,
+  //   todo: "Read JS Book",
+  //   completed: false,
+  // },
+  // {
+  //   id: 2,
+  //   todo: "Read Design Patterns Book",
+  //   completed: false,
+  // },
 ];
 class Modal {
   constructor() {
-    this.todos = [...initialTodos];
+    this.todos = this.getAllTodos();
   }
 
   bindModalToController(handler) {
     this.todoListChanged = handler;
+  }
+  _commitDB() {
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.todoListChanged();
   }
 
   addTodo(name: string) {
@@ -28,38 +32,43 @@ class Modal {
       todo: name,
       completed: false,
     });
-    this.todoListChanged();
+    this._commitDB();
   }
 
   removeTodo(id: number) {
     this.todos = this.todos.filter((todo) => todo.id !== id);
+    this._commitDB();
   }
   updateTodoName(id: number, name: string) {
+    console.log("update TOdo Name", name, id);
     this.todos = this.todos.map((todo) => {
       if (todo.id === id) {
         return {
           ...todo,
-          name: name,
+          todo: name,
         };
       }
       return todo;
     });
+    this._commitDB();
   }
 
-  updateCompleted(id: number, state: boolean) {
+  toggleCompleted(id: number) {
     this.todos = this.todos.map((todo) => {
       if (todo.id === id) {
         return {
           ...todo,
-          completed: state,
+          completed: !todo.completed,
         };
       }
       return todo;
     });
+    this._commitDB();
   }
 
   getAllTodos() {
-    return this.todos;
+    const todos = JSON.parse(localStorage.getItem("todos"));
+    return todos || [];
   }
 }
 

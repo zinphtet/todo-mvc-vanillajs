@@ -22,6 +22,8 @@ class View {
     this.app.appendChild(this.ul);
 
     // this.bindAddToDoHandler();
+    // this.bindDeleteHandler();
+    // this.bindEditHandler();
   }
 
   qs(selector: string) {
@@ -44,8 +46,49 @@ class View {
       //   you can add validation here
       const inputValue = this.input.value;
       if (inputValue.trim() === "") return;
-      console.log("value", inputValue);
       handler(inputValue);
+      this.input.value = "";
+    });
+  }
+
+  bindDeleteHandler(handler) {
+    this.ul.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target.classList.contains("delete")) {
+        const deleteLi = target.closest(".todo-item");
+        const deleteId = deleteLi.dataset.id;
+        handler(parseInt(deleteId));
+      }
+    });
+  }
+
+  bindToggleHandler(handler) {
+    this.ul.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target.classList.contains("toggle")) {
+        const deleteLi = target.closest(".todo-item");
+        const deleteId = deleteLi.dataset.id;
+        handler(parseInt(deleteId));
+      }
+    });
+  }
+
+  bindEditHandler(handler) {
+    this.ul.addEventListener("click", (e) => {
+      const target = e.target;
+      if (target.classList.contains("edit")) {
+        const deleteLi = target.closest(".todo-item");
+        const deleteId = deleteLi.dataset.id;
+        let updatedText = "";
+        const pText = deleteLi.querySelector("p");
+        pText.setAttribute("contenteditable", true);
+        pText.focus();
+        pText.addEventListener("focusout", (e) => {
+          console.log("focus out");
+          updatedText = pText.textContent;
+          handler(parseInt(deleteId), updatedText);
+        });
+      }
     });
   }
 
@@ -53,7 +96,17 @@ class View {
     this.ul.innerHTML = "";
     let list = "";
     todos.forEach((todo) => {
-      list += `<li class="todo-item"> ${todo.todo}</li>`;
+      list += `<li class="todo-item ${todo.completed && "completed"}" data-id=${
+        todo.id
+      }> 
+        <p>   ${todo.todo}</p>
+    
+       <div>
+       <button class='delete'> delete </button>
+        <button class='edit'> edit </button>
+        <button class="toggle"> toggle state</button>
+       </div>
+      </li>`;
     });
     this.ul.innerHTML = list;
   }
